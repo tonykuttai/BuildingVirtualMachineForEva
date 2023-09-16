@@ -41,5 +41,4 @@ eva-vm/eva-vm
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/settings.json
-.gitignore
 .vscode/tasks.json
