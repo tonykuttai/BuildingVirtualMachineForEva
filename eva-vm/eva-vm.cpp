@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]){
     auto result = vm.exec(R"(
         42
     )");
-    log(result.number);
+    log(AS_NUMBER(result));
     std::cout << "Verified !" << std::endl;
     return 0;
 }
