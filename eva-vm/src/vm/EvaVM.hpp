@@ -3,9 +3,11 @@
 */
 
 #pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 #include "../bytecode/OpCode.hpp"
+#include "../Logger.hpp"
 
 #define READ_BYTE() *ip++
 
@@ -32,9 +34,13 @@ public:
     // Main eval loop
     void eval(){
         for(;;){
-            switch (READ_BYTE()) {
-            case OP_HALT:
-                return;
+            auto opcode = READ_BYTE();
+            switch (opcode) {
+                case OP_HALT:
+                    return;
+                default:
+                    DIE << "Unknown opcode: " << std::hex << opcode << std::endl;
+
             }
         }
     }

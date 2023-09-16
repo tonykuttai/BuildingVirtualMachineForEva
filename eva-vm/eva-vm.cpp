@@ -10,5 +10,7 @@ int main(int argc, char const *argv[]){
     vm.exec(R"(
         42
     )");
+
+    std::cout << "Verified !" << std::endl;
     return 0;
 }
