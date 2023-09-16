@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+*.log
+eva-vm/eva-vm.dSYM
+
