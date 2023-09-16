@@ -1,0 +1,7 @@
+# Rules
+rule cxx
+  command = clang++ -std=c++17 -Wall -ggdb3 $in -o $out
+  description = CXX $out
+
+# Build
+build eva-vm: cxx eva-vm.cpp
