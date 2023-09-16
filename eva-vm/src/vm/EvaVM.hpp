@@ -35,6 +35,7 @@ public:
     void eval(){
         for(;;){
             auto opcode = READ_BYTE();
+            log(opcode);
             switch (opcode) {
                 case OP_HALT:
                     return;

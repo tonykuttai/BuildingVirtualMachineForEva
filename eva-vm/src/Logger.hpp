@@ -17,3 +17,4 @@ public:
 };
 
 #define DIE ErrorLogMessage()
+#define log(value) std::cout<< #value << " = " << (value) << std::endl
