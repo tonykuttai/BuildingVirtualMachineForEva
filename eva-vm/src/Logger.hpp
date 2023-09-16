@@ -2,19 +2,64 @@
  * Logger and error reporter
 */
 
-#include <sstream>
+// #include <sstream>
 
 #pragma once
 
-class ErrorLogMessage : public std::basic_ostringstream<char> {
+// class ErrorLogMessage : public std::basic_ostringstream<char> {
+// private:
+//     /* data */
+// public:
+//     ~ErrorLogMessage(){
+//         fprintf(stderr, "Fatal error: %s\n", str().c_str());
+//         exit(EXIT_FAILURE);
+//     }
+// };
+
+// #define DIE ErrorLogMessage()
+// #define log(value) std::cout<< #value << " = " << (value) << std::endl
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+class CustomLogger : public std::basic_ostringstream<char>  {
 private:
-    /* data */
+    std::ofstream logFile;
+
 public:
-    ~ErrorLogMessage(){
+    CustomLogger(const std::string& filename) {
+        logFile.open(filename, std::ofstream::out);
+        if (!logFile.is_open()) {
+            std::cerr << "Error: Could not open log file." << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    ~CustomLogger() {
+        logFile.close();        
+    }
+
+    void errorLogMessage(const std::string& msg){
         fprintf(stderr, "Fatal error: %s\n", str().c_str());
         exit(EXIT_FAILURE);
     }
+
+    template <typename T>
+    void log(const std::string& varName, const T& value) {
+        if(varName == "opcode"){
+            logFile << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
+            std::cout << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
+        }else{
+            logFile << varName << " = " << std::to_string(value) << std::endl;
+            std::cout << varName << " = " << std::to_string(value) << std::endl;
+        }
+    }
 };
 
-#define DIE ErrorLogMessage()
-#define log(value) std::cout<< #value << " = " << (value) << std::endl
+// Create a global instance of the CustomLogger class
+CustomLogger logger("console.log");
+
+// Define a macro for logging
+#define log(value) logger.log(#value, value)
+#define DIE(msg) logger.errorLogMessage(#msg)
