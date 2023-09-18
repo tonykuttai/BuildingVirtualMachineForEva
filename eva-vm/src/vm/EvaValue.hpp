@@ -19,5 +19,5 @@ class EvaValue {
         };
 };
 
-#define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, value})
+#define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, {value}})
 #define AS_NUMBER(evaValue) ((double)(evaValue).number)
