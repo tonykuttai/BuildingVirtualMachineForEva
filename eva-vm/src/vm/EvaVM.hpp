@@ -57,11 +57,16 @@ public:
         // 2. compile program to Eva bytecode
         // code = compiler->compile(ast);
 
-        constants.push_back(NUMBER(10));
-        constants.push_back(NUMBER(3));
-        constants.push_back(NUMBER(10));
+        // constants.push_back(NUMBER(10));
+        // constants.push_back(NUMBER(3));
+        // constants.push_back(NUMBER(10));
 
-        code = {OP_CONST, 0, OP_CONST, 1, OP_MUL, OP_CONST, 2, OP_SUB, OP_HALT};
+        constants.emplace_back(ALLOC_STRING("Hello "));
+        constants.emplace_back(ALLOC_STRING("World"));
+
+        // code = {OP_CONST, 0, OP_CONST, 1, OP_MUL, OP_CONST, 2, OP_SUB, OP_HALT};
+        code = {OP_CONST, 0, OP_CONST, 1, OP_ADD, OP_HALT};
+
         ip = &code[0];
         sp = stack.begin();
 
@@ -80,9 +85,24 @@ public:
                 case OP_CONST:
                     push(GET_CONST());
                     break;
-                case OP_ADD:
-                    BINARY_OP(+);
+                case OP_ADD: {
+                    // BINARY_OP(+);
+                    auto op2 = pop();
+                    auto op1 = pop();
+                    
+                    if(IS_NUMBER(op1) && IS_NUMBER(op2)){
+                        // Numeric addition
+                        auto v1 = AS_NUMBER(op1);
+                        auto v2 = AS_NUMBER(op2);
+                        push(NUMBER(v1 + v2));
+                    }else if(IS_STRING(op1) && IS_STRING(op2)){
+                        // String concatenation
+                        auto s1 = AS_CPPSTRING(op1);
+                        auto s2 = AS_CPPSTRING(op2);
+                        push(ALLOC_STRING(s1 + s2));
+                    }
                     break;
+                }
                 case OP_SUB:
                     BINARY_OP(-);
                     break;

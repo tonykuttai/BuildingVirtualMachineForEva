@@ -34,10 +34,11 @@
 *.log
 eva-vm/eva-vm.dSYM
 eva-vm/.ninja_log
+eva-vm/eva-vm-tests.dSYM/*
 
 
 eva-vm/eva-vm
-eva-vm/eva-vm
+eva-vm/eva-vm-tests
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/settings.json

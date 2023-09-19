@@ -1,1 +1,2 @@
-ninja -t clean;ninja
+ninja -t clean;ninja;
+./eva-vm-tests

@@ -3,5 +3,12 @@ rule cxx
   command = clang++ -std=c++17 -Wall -ggdb3 $in -o $out
   description = CXX $out
 
+rule gtest
+  command = g++ -std=c++17 -Wall -ggdb3 $in -o $out -Isrc/ -lgtest -lgtest_main -pthread
+  description = Testing $out
+
 # Build
-build eva-vm: cxx eva-vm.cpp
+# build eva-vm: cxx eva-vm.cpp
+
+# Add your unit test targets here
+build eva-vm-tests: gtest unittests/tBasicOperations.cpp
