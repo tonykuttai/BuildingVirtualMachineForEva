@@ -14,6 +14,9 @@
 #include "../bytecode/OpCode.hpp"
 #include "../Logger.hpp"
 #include "EvaValue.hpp"
+#include "../parser/EvaParser.h"
+
+using syntax::EvaParser;
 
 #define READ_BYTE() *ip++
 #define GET_CONST() constants[READ_BYTE()]
@@ -29,7 +32,7 @@ class EvaVM{
 private:
     /* data */
 public:
-    EvaVM(){
+    EvaVM() : parser(std::make_unique<EvaParser>()){
         // Init the stack
         sp = stack.begin();
     }
@@ -52,7 +55,7 @@ public:
     }
     EvaValue exec(const std::string &program){
         // 1. Parse the program
-        // auto ast = parser->parse(program)
+        auto ast = parser->parse(program);
 
         // 2. compile program to Eva bytecode
         // code = compiler->compile(ast);
@@ -119,6 +122,9 @@ public:
             }
         }
     }
+
+    // Parser
+    std::unique_ptr<EvaParser> parser;
 
     // Instruction Pointer (aka Program counter)
     uint8_t* ip;
