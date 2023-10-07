@@ -1,6 +1,6 @@
 # Rules
 rule cxx
-  command = clang++ -std=c++17 -Wall -ggdb3 $in -o $out
+  command = clang++ -std=c++17 -Wno-c99-designator -Wall -ggdb3 $in -o $out
   description = CXX $out
 
 rule gtest
@@ -8,7 +8,7 @@ rule gtest
   description = Testing $out
 
 # Build
-# build eva-vm: cxx eva-vm.cpp
+build eva-vm: cxx eva-vm.cpp
 
 # Add your unit test targets here
 build eva-vm-tests: gtest unittests/tBasicOperations.cpp

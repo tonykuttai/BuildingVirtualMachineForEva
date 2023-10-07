@@ -6,18 +6,18 @@ protected:
   EvaVM vm;
 };
 
-// TEST_F(EvaVMTest, NumberConstants) {
-//   // Create a simple program that multiplies two numbers and subtracts a third number.
-//   std::string program = R"(
-//     42 * 10 - 3 // this is a dummy insert.
-//   )";
+TEST_F(EvaVMTest, NumberConstants) {
+  // Create a simple program that multiplies two numbers and subtracts a third number.
+  std::string program = R"(
+    3
+  )";
 
-//   // Execute the program and get the result.
-//   auto result = vm.exec(program);
+  // Execute the program and get the result.
+  auto result = vm.exec(program);
 
-//   // Assert that the result is 419.
-//   EXPECT_EQ(AS_NUMBER(result), 20.0);
-// }
+  // Assert that the result is 3.
+  EXPECT_EQ(AS_NUMBER(result), 3);
+}
 
 TEST_F(EvaVMTest, StringConstants) {
   // Create a simple program that multiplies two numbers and subtracts a third number.

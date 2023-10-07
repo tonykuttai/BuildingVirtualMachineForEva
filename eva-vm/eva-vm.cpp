@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]){
 
     EvaVM vm;
     auto result = vm.exec(R"(
-        (+ "Hello, " "World!")
+        3
     )");
     log(AS_NUMBER(result));
     std::cout << "Verified !" << std::endl;
