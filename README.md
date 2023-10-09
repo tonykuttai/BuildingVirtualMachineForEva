@@ -39,3 +39,7 @@ For the example `(if (> 5 10) 1 2)`, the machine code emitted would be: The byte
 <alternate>     CONST 3 (2)
                 ...
 ```
+
+### Disassembler
+
+![Disassembler](eva-vm/Resources/SnapShots/#2%20Disassembler.png)

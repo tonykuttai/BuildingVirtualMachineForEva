@@ -43,7 +43,5 @@ eva-vm/eva-vm-tests
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
-eva-vm/eva-vm-tests-Control.dSYM/Contents/Info.plist
-eva-vm/eva-vm-tests-Control.dSYM/Contents/Resources/DWARF/eva-vm-tests-Control
-eva-vm/eva-vm-tests-Control.dSYM/Contents/Resources/Relocations/aarch64/eva-vm-tests-Control.yml
+eva-vm/eva-vm-tests-Control.dSYM/*
 eva-vm/eva-vm-tests-Control
