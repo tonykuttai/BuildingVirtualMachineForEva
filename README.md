@@ -42,4 +42,4 @@ For the example `(if (> 5 10) 1 2)`, the machine code emitted would be: The byte
 
 ### Disassembler
 
-![Disassembler](https://github.com/tonykuttai/BuildingVirtualMachineForEva/blob/main/eva-vm/Resources/SnapShots/%232%20Disassembler.png)
+![Disassembler](https://github.com/tonykuttai/BuildingVirtualMachineForEva/blob/main/eva-vm/Resources/SnapShots/disassembler.png)
