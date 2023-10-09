@@ -4,6 +4,9 @@
 
 #pragma once
 #include <string>
+#include <iostream>
+#include <sstream>
+#include "../Logger.hpp"
 
 // Eva value type
 enum class EvaValueType {
@@ -73,3 +76,40 @@ struct CodeObject : public Object {
         (IS_OBJECT(evaValue) && IS_OBJECT_TYPE(evaValue, ObjectType::STRING))
 #define IS_CODE(evaValue) \
         (IS_OBJECT(evaValue) && IS_OBJECT_TYPE(evaValue, ObjectType::CODE))
+
+// String representation used in constants for debug
+std::string evaValueToTypeString(const EvaValue& evaValue){
+    if (IS_NUMBER(evaValue)){
+        return "NUMBER";
+    }else if(IS_STRING(evaValue)){
+        return "STRING";
+    }else if (IS_CODE(evaValue)){
+        return "CODE";
+    } else{
+        std::stringstream ss;
+        ss << "evaValueToTypeString: unknown type" << (int) evaValue.type;
+        DIE(ss.str());
+    }
+    return ""; // unreachable
+}
+
+// String representation used in constants for debug
+std::string evaValueToConstantString(const EvaValue& evaValue){
+    std::stringstream ss;
+    if (IS_NUMBER(evaValue)){
+        ss << evaValue.number;
+    }else if(IS_STRING(evaValue)){
+        ss << '"' << AS_CPPSTRING(evaValue) << '"' ;
+    }else if (IS_CODE(evaValue)){
+        auto code = AS_CODE(evaValue);
+        ss << "code " << code << " : " << code->name; 
+    } else{
+        ss << "evaValueToConstantString: unknown type" << (int) evaValue.type;
+        DIE(ss.str());
+    }
+    return ss.str();
+}
+// Output Stream
+std::ostream& operator<<(std::ostream& os, const EvaValue& evaValue){
+    return os << "EvaValue (" << evaValueToTypeString(evaValue) << "): " << evaValueToConstantString(evaValue);
+}

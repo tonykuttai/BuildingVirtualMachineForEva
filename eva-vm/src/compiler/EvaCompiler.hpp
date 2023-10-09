@@ -7,6 +7,27 @@
 #include "../parser/EvaParser.h"
 #include "../vm/EvaValue.hpp"
 
+// Allocates new constants in the pool
+#define ALLOC_CONST(tester, converter, allocator, value) \
+  do {                                                   \
+    for (auto i = 0; i < co->constants.size(); i++) {    \
+      if (!tester(co->constants[i])) {                   \
+        continue;                                        \
+      }                                                  \
+      if (converter(co->constants[i]) == value) {        \
+        return i;                                        \
+      }                                                  \
+    }                                                    \
+    co->constants.push_back(allocator(value));           \
+  } while (false)
+
+#define GEN_BINARY_OP(op) \
+  do {                    \
+    gen(exp.list[1]);     \
+    gen(exp.list[2]);     \
+    emit(op);             \
+  } while (false)
+
 /**
  * Compiler class, emits byte code, records constant pool, vars etc.
  */
@@ -30,6 +51,7 @@ class EvaCompiler {
 
   // Main compile loop
   void gen(const Exp& exp) {
+    ExpType tagType;
     switch (exp.type) {
       // Numbers
       case ExpType::NUMBER:
@@ -42,6 +64,27 @@ class EvaCompiler {
         emit(OP_CONST);
         emit(stringConstIdx(exp.string));
         break;
+        
+      // Lists
+      case ExpType::LIST:
+        // auto tag = exp.list[0];
+        tagType = exp.list[0].type;
+        // Special cases
+        if (tagType == ExpType::SYMBOL) {
+          auto op = exp.list[0].string;
+
+          // Binary MATH Operations
+          if (op == "+") {
+            GEN_BINARY_OP(OP_ADD);
+          } else if(op == "-"){
+            GEN_BINARY_OP(OP_SUB);
+          } else if(op == "*"){
+            GEN_BINARY_OP(OP_MUL);
+          } else if(op == "/"){
+            GEN_BINARY_OP(OP_DIV);
+          }
+        }
+        break;
 
       default:
         break;
@@ -51,28 +94,12 @@ class EvaCompiler {
  private:
   // Allocates a string constant
   size_t stringConstIdx(const std::string& value) {
-    for (auto i = 0; i < co->constants.size(); i++) {
-      if (!IS_STRING(co->constants[i])) {
-        continue;
-      }
-      if (AS_CPPSTRING(co->constants[i]) == value) {
-        return i;
-      }
-    }
-    co->constants.push_back(ALLOC_STRING(value));
+    ALLOC_CONST(IS_STRING, AS_CPPSTRING, ALLOC_STRING, value);
     return co->constants.size() - 1;
   }
   // Allocates a numeric constant
   size_t numericConstIdx(double value) {
-    for (auto i = 0; i < co->constants.size(); i++) {
-      if (!IS_NUMBER(co->constants[i])) {
-        continue;
-      }
-      if (AS_NUMBER(co->constants[i]) == value) {
-        return i;
-      }
-    }
-    co->constants.push_back(NUMBER(value));
+    ALLOC_CONST(IS_NUMBER, AS_NUMBER, NUMBER, value);
     return co->constants.size() - 1;
   }
   // Emits data to the bytecode

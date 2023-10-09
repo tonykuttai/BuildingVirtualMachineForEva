@@ -29,6 +29,7 @@ private:
 
 public:
     CustomLogger(const std::string& filename) {
+        logFile.close();
         logFile.open(filename, std::ofstream::out);
         if (!logFile.is_open()) {
             std::cerr << "Error: Could not open log file." << std::endl;
@@ -45,15 +46,22 @@ public:
         exit(EXIT_FAILURE);
     }
 
+    // template <typename T>
+    // void log(const std::string& varName, const T& value) {
+    //     if(varName == "opcode"){
+    //         logFile << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
+    //         std::cout << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
+    //     }else{
+    //         logFile << varName << " = " << std::to_string(value) << std::endl;
+    //         std::cout << varName << " = " << std::to_string(value) << std::endl;
+    //     }
+    // }
+
     template <typename T>
-    void log(const std::string& varName, const T& value) {
-        if(varName == "opcode"){
-            logFile << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
-            std::cout << varName << " = 0x" << std::hex  << std::to_string(value) << std::endl;
-        }else{
-            logFile << varName << " = " << std::to_string(value) << std::endl;
-            std::cout << varName << " = " << std::to_string(value) << std::endl;
-        }
+    void logE(const T& evaValue){
+        logFile << evaValue << std::endl;
+        // std::cout << evaValue << std::endl;
+        logFile.flush();
     }
 };
 
@@ -61,5 +69,6 @@ public:
 CustomLogger logger("console.log");
 
 // Define a macro for logging
-#define log(value) logger.log(#value, value)
+// #define log(value) logger.log(#value, value)
+#define logE(value) logger.logE(value)
 #define DIE(msg) logger.errorLogMessage(#msg)
