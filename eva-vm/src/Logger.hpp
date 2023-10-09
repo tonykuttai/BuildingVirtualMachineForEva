@@ -30,7 +30,7 @@ private:
 public:
     CustomLogger(const std::string& filename) {
         logFile.close();
-        logFile.open(filename, std::ofstream::out);
+        logFile.open(filename, std::ofstream::out | std::ofstream::trunc);
         if (!logFile.is_open()) {
             std::cerr << "Error: Could not open log file." << std::endl;
             exit(EXIT_FAILURE);

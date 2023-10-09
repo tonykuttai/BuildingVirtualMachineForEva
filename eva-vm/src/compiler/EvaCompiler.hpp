@@ -6,6 +6,7 @@
 #include "../bytecode/OpCode.hpp"
 #include "../parser/EvaParser.h"
 #include "../vm/EvaValue.hpp"
+#include <map>
 
 // Allocates new constants in the pool
 #define ALLOC_CONST(tester, converter, allocator, value) \
@@ -64,7 +65,7 @@ class EvaCompiler {
         emit(OP_CONST);
         emit(stringConstIdx(exp.string));
         break;
-        
+
       // Lists
       case ExpType::LIST:
         // auto tag = exp.list[0];
@@ -76,13 +77,30 @@ class EvaCompiler {
           // Binary MATH Operations
           if (op == "+") {
             GEN_BINARY_OP(OP_ADD);
-          } else if(op == "-"){
+          } else if (op == "-") {
             GEN_BINARY_OP(OP_SUB);
-          } else if(op == "*"){
+          } else if (op == "*") {
             GEN_BINARY_OP(OP_MUL);
-          } else if(op == "/"){
+          } else if (op == "/") {
             GEN_BINARY_OP(OP_DIV);
+          } else if(compareOps_.count(op) != 0){
+            // compare operations: (> 5 10)
+            gen(exp.list[1]);
+            gen(exp.list[2]);
+            emit(OP_COMPARE);
+            emit(compareOps_[op]);
           }
+        }
+        break;
+
+      // Symbols (variables, operators)
+      case ExpType::SYMBOL:
+        // Boolean
+        if (exp.string == "true" || exp.string == "false") {
+          emit(OP_CONST);
+          emit(booleanConstIdx(exp.string == "true" ? true : false));
+        } else{
+          // TODO: variables
         }
         break;
 
@@ -92,6 +110,12 @@ class EvaCompiler {
   }
 
  private:
+  // Allocates a boolean constant
+  size_t booleanConstIdx(bool value){
+    ALLOC_CONST(IS_BOOLEAN, AS_BOOLEAN, BOOLEAN, value);
+    return co->constants.size() - 1;
+  }
+
   // Allocates a string constant
   size_t stringConstIdx(const std::string& value) {
     ALLOC_CONST(IS_STRING, AS_CPPSTRING, ALLOC_STRING, value);
@@ -106,4 +130,10 @@ class EvaCompiler {
   void emit(uint8_t code) { co->code.push_back(code); }
   // Compiling code object
   CodeObject* co;
+  // Compare ops map
+  static std::map<std::string, uint8_t> compareOps_;
+};
+
+std::map<std::string, uint8_t> EvaCompiler::compareOps_ = {
+  {"<", 0}, {">", 1}, {"==", 2}, {">=", 3}, {"<=", 4}, {"!=", 5}
 };

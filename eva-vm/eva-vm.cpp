@@ -1,21 +1,16 @@
 /**
  * Eva VM Main executable
-*/
+ */
 
-#include "src/vm/EvaVM.hpp"
 #include "src/Logger.hpp"
+#include "src/vm/EvaVM.hpp"
 
-int main(int argc, char const *argv[]){
-
-    EvaVM vm;
-    auto result = vm.exec(R"(
-        (+ 3 2)
-    )");
-    logE(result);
-
-    result = vm.exec(R"(
-        (+ "Hello " "World")
-    )");
-    logE(result);
-    return 0;
+int main(int argc, char const *argv[]) {
+  std::string program = R"(
+    (> 5 2)
+  )";
+  EvaVM vm;
+  auto result = vm.exec(program);
+  logE(result);
+  return 0;
 }

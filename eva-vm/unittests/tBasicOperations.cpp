@@ -8,6 +8,7 @@ using ::testing::StartsWith;
 class EvaVMTest : public ::testing::Test {
  protected:
   EvaVM vm;
+  std::string consoleLog = "console.log";
   // Helper function to read the contents of the console.log file
   std::string readConsoleLogFile(const std::string& filename) {
     std::ifstream logFile(filename);
@@ -19,6 +20,20 @@ class EvaVMTest : public ::testing::Test {
                         std::istreambuf_iterator<char>());
     logFile.close();
     return content;
+  }
+
+  void clearConsoleLog() {
+    std::ifstream logFile(consoleLog, std::ofstream::out);
+    if (!logFile.is_open()) {
+      throw std::runtime_error("Failed to open " + consoleLog);
+    }
+    logFile.close();
+  }
+  void consoleLogContainsExpected(const std::string& expected) {
+    const std::string consoleLogActual = readConsoleLogFile("console.log");
+    // EXPECT_THAT(consoleLogActual, ::testing::ContainsRegex(expected));
+    EXPECT_THAT(consoleLogActual, ::testing::HasSubstr(expected));
+    clearConsoleLog();
   }
 };
 
@@ -105,26 +120,72 @@ TEST_F(EvaVMTest, LoggerTest) {
   const std::string expected = "EvaValue (NUMBER): 3";
   const std::string consoleLogActual = readConsoleLogFile("console.log");
 
-  // Assert that the result is 3.
-  EXPECT_THAT(consoleLogActual, StartsWith(expected));
+  consoleLogContainsExpected(expected);
 }
 
-// TEST_F(EvaVMTest, LoggerCodeTest) {
-//   std::string program = R"(
-//     (if (> 5 10) 1 2)
-//   )";
+TEST_F(EvaVMTest, BooleanSymbols) {
+  std::string program = R"(
+    true
+  )";
+  // Execute the program and get the result.
+  auto result = vm.exec(program);
+  logE(result);
+  std::string expected = "EvaValue (BOOLEAN): true";
+  consoleLogContainsExpected(expected);
 
-//   // Execute the program and get the result.
-//   //auto result = vm.exec(program);
+  program = R"(
+    false
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  logE(result);
+  expected = "EvaValue (BOOLEAN): false";
+  consoleLogContainsExpected(expected);
+}
 
-//   //logE(result);
+TEST_F(EvaVMTest, BooleanComparison) {
+  std::string program = R"(
+    (> 5 2)
+  )";
+  // Execute the program and get the result.
+  auto result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), true);
 
-//   // const std::string expected = "EvaValue (NUMBER): 3";
-//   // const std::string consoleLogActual = readConsoleLogFile("console.log");
+  program = R"(
+    (< 5 2)
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), false);
 
-//   // Assert that the result is 3.
-//   //EXPECT_THAT(consoleLogActual, StartsWith(expected));
-// }
+  program = R"(
+    (== 5 2)
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), false);
+
+  program = R"(
+    (<= 5 2)
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), false);
+
+  program = R"(
+    (>= 5 2)
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), true);
+
+  program = R"(
+    (!= 5 2)
+  )";
+  // Execute the program and get the result.
+  result = vm.exec(program);
+  EXPECT_EQ(AS_BOOLEAN(result), true);
+}
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

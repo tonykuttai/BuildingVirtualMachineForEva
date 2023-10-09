@@ -9,7 +9,9 @@
 #define OP_ADD 0x02
 // Sub instruction
 #define OP_SUB 0x03
-// Sub instruction
+// Multiplication instruction
 #define OP_MUL 0x04
-// Sub instruction
+// Divison instruction
 #define OP_DIV 0x05
+// Comparison
+#define OP_COMPARE 0x06
