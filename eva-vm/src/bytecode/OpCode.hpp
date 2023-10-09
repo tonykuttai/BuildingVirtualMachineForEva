@@ -15,3 +15,6 @@
 #define OP_DIV 0x05
 // Comparison
 #define OP_COMPARE 0x06
+// Jump
+#define OP_JMP_IF_FALSE 0x07
+#define OP_JMP 0x08

@@ -21,7 +21,11 @@ using syntax::EvaParser;
 class EvaValue;
 
 #define READ_BYTE() *ip++
-#define GET_CONST() co->constants[READ_BYTE()]
+// Read a short word (2 bytes)
+#define READ_SHORT() (ip += 2, (uint16_t)((ip[-2] << 8) | ip[-1]))
+// Converts bytecode index to a pointer
+#define TO_ADDRESS(index) (&co->code[index])
+#define GET_CONST() (co->constants[READ_BYTE()])
 #define STACK_LIMIT 512
 #define BINARY_OP(op)            \
   do {                           \
@@ -137,7 +141,7 @@ class EvaVM {
         case OP_DIV:
           BINARY_OP(/);
           break;
-        case OP_COMPARE:
+        case OP_COMPARE: {
           auto op = READ_BYTE();
           auto op2 = pop();
           auto op1 = pop();
@@ -150,10 +154,26 @@ class EvaVM {
             auto v2 = AS_CPPSTRING(op2);
             COMPARE_VALUES(op, v1, v2);
           }
-
-          // default:
-          //     ss << "0x" << std::hex << std::setw(2) << std::setfill('0') <<
-          //     opcode << std::endl; DIE("Unknown opcode: " + ss.str());
+          break;
+        }
+        case OP_JMP_IF_FALSE: {
+          // Conditional Jump
+          auto cond = AS_BOOLEAN(pop());
+          auto address = READ_SHORT();
+          if(!cond){
+             ip = TO_ADDRESS(address);
+          }
+          break;
+        }
+        case OP_JMP:{
+          // un conditional jump
+          ip = TO_ADDRESS(READ_SHORT());
+          break;
+        }
+        default:
+          ss << "Unknown Opcode: " << std::hex << std::setw(2)
+             << std::setfill('0') << opcode << std::endl;
+          DIE(ss.str());
       }
     }
   }

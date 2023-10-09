@@ -12,3 +12,4 @@ build eva-vm: cxx eva-vm.cpp
 
 # Add your unit test targets here
 build eva-vm-tests: gtest unittests/tBasicOperations.cpp
+build eva-vm-tests-Control: gtest unittests/tControlFlowAndVariables.cpp
